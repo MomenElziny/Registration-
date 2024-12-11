@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>View Registrations</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <style>
+        body {
+            background-color: #f0f0f0;
+        }
+
+        .navbar {
+            background-color: #333;
+            border-top: 3px solid #333; /* Add a light grey top border */
+        }
+
+        .container {
+            position: relative;
+        }
+
+        .insert-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        /* Add blue border to the Insert Data button icon */
+        .insert-button .btn {
+            border: 2px solid #00bfff;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+    <div class="container">
+        <a class="navbar-brand" href="#">List Of Users</a>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h1 class="mb-4">Registered Records</h1>
+    <table class="table table-striped">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Gender</th>
+            <th>Address</th>
+            <th>City</th>
+            <th>Pin</th>
+            <th>State</th>
+            <th>Email</th>
+            <th>Contact</th>
+            <th>Profile Photo</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="registration : ${registrations}">
+            <td th:text="${registration.id}"></td>
+            <td th:text="${registration.name}"></td>
+            <td th:text="${registration.gender}"></td>
+            <td th:text="${registration.address}"></td>
+            <td th:text="${registration.city}"></td>
+            <td th:text="${registration.pin}"></td>
+            <td th:text="${registration.state}"></td>
+            <td th:text="${registration.email}"></td>
+            <td th:text="${registration.contact}"></td>
+            <td>
+                <!-- Display the profile photo using Thymeleaf -->
+                <img th:if="${registration.profilePhoto != null}"
+                     th:src="@{/registration/photo/{registrationId}(registrationId=${registration.id})}"
+                     alt="Profile Photo" class="img-thumbnail" style="max-width: 100px; max-height: 100px;" />
+                <span th:if="${registration.profilePhoto == null}">No Photo Available</span>
+            </td>
+            <td>
+                <!-- Update and Delete action icons -->
+                <a th:href="@{'/registration/edit/' + ${registration.id}}">
+                    <i class="fas fa-edit" title="Edit"></i>
+                </a>
+                <a th:href="@{'/registration/delete/' + ${registration.id}}"
+                   onclick="return confirm('Are you sure you want to delete this record?');">
+                    <i class="fas fa-trash-alt" title="Delete"></i>
+                </a>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <!-- Pagination links -->
+    <ul class="pagination">
+        <li class="page-item" th:if="${registrations.hasPrevious()}">
+            <a class="page-link" th:href="@{/registration/view(page=0)}" aria-label="First">
+                <span aria-hidden="true">&laquo;&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item" th:if="${registrations.hasPrevious()}">
+            <a class="page-link" th:href="@{/registration/view(page=${registrations.previousPageable().pageNumber})}" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+            </a>
+        </li>
+        <li class="page-item" th:each="page, status : ${registrations.totalPages}" th:classappend="${page == registrations.number} ? 'active' : ''">
+            <a class="page-link" th:href="@{/registration/view(page=${page})}" th:text="${page + 1}"></a>
+        </li>
+        <li class="page-item" th:if="${registrations.hasNext()}">
+            <a class="page-link" th:href="@{/registration/view(page=${registrations.nextPageable().pageNumber})}" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+            </a>
+        </li>
+        <li class="page-item" th:if="${registrations.hasNext()}">
+            <a class="page-link" th:href="@{/registration/view(page=${registrations.totalPages - 1})}" aria-label="Last">
+                <span aria-hidden="true">&raquo;&raquo;</span>
+            </a>
+        </li>
+    </ul>
+    <a href="/registration/insert" class="insert-button">
+        <button class="btn btn-secondary">Insert Data</button>
+    </a>
+</div>
+
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.3/dist/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
